@@ -1,0 +1,96 @@
+﻿<Window x:Class="WPFWeather.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WPFWeather"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:converters="clr-namespace:WPFWeather.Converters"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
+        xmlns:viewModels="clr-namespace:WPFWeather.ViewModels"
+        Title="WPF Weather Demo" Height="500" Width="300"
+        d:DataContext="{}" Background="Aquamarine">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="130*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="80*"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="110*"/>
+        </Grid.RowDefinitions>
+
+
+
+        <StackPanel Visibility="{Binding DownloadingWeather, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" HorizontalAlignment="Center" Height="40"  Grid.Row="4" VerticalAlignment="Center" Width="200" Orientation="Horizontal">
+            <Canvas Width="40">
+                <Polygon Width="31" Height="31" Fill="Blue" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Polygon.LayoutTransform>
+                        <RotateTransform Angle="{Binding Weather.WindDirection}" />
+                    </Polygon.LayoutTransform>
+                    <Polygon.Points>
+                        <Point X="15" Y="0" />
+                        <Point X="10" Y="30" />
+                        <Point X="20" Y="30" />
+                    </Polygon.Points>
+                </Polygon>
+            </Canvas>
+            <TextBlock Text="{Binding Weather.WindSpeed, StringFormat={}{0} m/s}"  FontWeight="Bold" FontSize="30" Foreground="DimGray" TextAlignment="Center"  TextWrapping="Wrap" Height="40" Width="160" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+
+
+
+        <StackPanel Visibility="{Binding DownloadingWeather, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" HorizontalAlignment="Center" Height="120"  Grid.Row="0" VerticalAlignment="Center" Width="100" Orientation="Vertical">
+            <Image Source="{Binding Weather.Icon}" Height="80" Width="80"/>
+            <TextBlock Visibility="{Binding DownloadingWeather, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" Text="{Binding Weather.Description}" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="30" HorizontalAlignment="Center" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" Height="40" Width="100"/>
+
+        </StackPanel>
+
+        <ComboBox Name="comboBox" SelectedValuePath="Content" Grid.Row="1" Height="50">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <command:EventToCommand Command="{Binding DownloadWeatherCommand}"
+                                                CommandParameter="{Binding ElementName=comboBox, Path=SelectedValue}" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <command:EventToCommand Command="{Binding DownloadWeatherCommand}"
+                                                CommandParameter="{Binding ElementName=comboBox, Path=SelectedValue}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+            <ComboBoxItem FontSize="40" IsSelected="True" Name="Brno">Brno</ComboBoxItem>
+            <ComboBoxItem FontSize="40" Name="London">London</ComboBoxItem>
+            <ComboBoxItem FontSize="40" Name="Praha">Praha</ComboBoxItem>
+        </ComboBox>
+
+        <StackPanel Visibility="{Binding DownloadingWeather, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" Height="55" Grid.Row="2" Width="200" HorizontalAlignment="Center" Orientation="Vertical">
+            <StackPanel  Height="40" Grid.Row="2" Width="200" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="{Binding Weather.Temperature, StringFormat={}{0:0}°C}" Grid.Row="2" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="30"  VerticalAlignment="Top" TextWrapping="Wrap" Height="40" Width="100" />
+                <TextBlock Text="{Binding Weather.Humidity, StringFormat={}{0:0}%}" Grid.Row="2" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="30"  VerticalAlignment="Top" TextWrapping="Wrap" Height="40" Width="100" />
+            </StackPanel>
+            <StackPanel Height="15" Grid.Row="2" Width="200" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="Temperature" Grid.Row="2" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="10"  VerticalAlignment="Bottom" TextWrapping="Wrap" Height="15" Width="100" />
+                <TextBlock Text="Humidity" Grid.Row="2" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="10"  VerticalAlignment="Bottom" TextWrapping="Wrap" Height="15" Width="100" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Visibility="{Binding DownloadingWeather, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" Height="55" Grid.Row="3" Width="200" HorizontalAlignment="Center" Orientation="Vertical">
+            <StackPanel  Height="40" Grid.Row="2" Width="200" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="{Binding Weather.Sunrise.TimeOfDay}" Grid.Row="3" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="20"  VerticalAlignment="Top" TextWrapping="Wrap" Height="40" Width="100" />
+                <TextBlock Text="{Binding Weather.Sunset.TimeOfDay}" Grid.Row="3" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="20"  VerticalAlignment="Top" TextWrapping="Wrap" Height="40" Width="100" />
+            </StackPanel>
+            <StackPanel Height="15" Grid.Row="3" Width="200" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="Sunrise" Grid.Row="3" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="10"  VerticalAlignment="Bottom" TextWrapping="Wrap" Height="15" Width="100" />
+                <TextBlock Text="Sunset" Grid.Row="3" FontWeight="Bold" Foreground="DimGray" TextAlignment="Center" FontSize="10"  VerticalAlignment="Bottom" TextWrapping="Wrap" Height="15" Width="100" />
+            </StackPanel>
+        </StackPanel>
+
+        <TextBlock Visibility="{Binding DownloadingWeather, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=False}" Text="Loading weather..." FontWeight="Bold" Grid.Row="4" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+    </Grid>
+</Window>

@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--Author of transition tabs is pitaya = http://flkt-crnpio.github.io/pitaya/ -->
+<html>
+<head>
+    <title> ITU AJAX </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2" />
+    <style type="text/css">
+        body {
+            background: #191828;
+            color: #efedef;
+            font-family: "Roboto", Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 0.01em;
+            line-height: 1.6em;
+            margin: 0;
+            padding: 100px; }
+        h1 {
+            font-size: 40px;
+            line-height: 0.8em;
+            color: rgba(255,255,255,0.2);}
+        a {
+            background: #fd264f;
+            color: #fff;
+            display: block;
+            font-size: 12px;
+            line-height: 1em;
+            margin: 10px;
+            padding: 5px 110px;
+            position: fixed;
+            top: 20px;
+            right: -100px;
+            text-align: center;
+            text-decoration: none;
+            transform: rotate(45deg);}
+        button:focus,
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none; }
+
+        .tabs {
+            display: block;
+            display: -webkit-flex;
+            display: -moz-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            -moz-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin: 0;
+            overflow: hidden; }
+        .tabs [class^="tab"] label,
+        .tabs [class*=" tab"] label {
+            color: #efedef;
+            cursor: pointer;
+            display: block;
+            font-size: 1.1em;
+            font-weight: 300;
+            line-height: 1em;
+            padding: 2rem 0;
+            text-align: center; }
+        .tabs [class^="tab"] [type="radio"],
+        .tabs [class*=" tab"] [type="radio"] {
+            border-bottom: 1px solid rgba(239, 237, 239, 0.5);
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: block;
+            width: 100%;
+            -webkit-transition: all 0.3s ease-in-out;
+            -moz-transition: all 0.3s ease-in-out;
+            -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out; }
+        .tabs [class^="tab"] [type="radio"]:hover, .tabs [class^="tab"] [type="radio"]:focus,
+        .tabs [class*=" tab"] [type="radio"]:hover,
+        .tabs [class*=" tab"] [type="radio"]:focus {
+            border-bottom: 1px solid #fd264f; }
+        .tabs [class^="tab"] [type="radio"]:checked,
+        .tabs [class*=" tab"] [type="radio"]:checked {
+            border-bottom: 2px solid #fd264f; }
+        .tabs [class^="tab"] [type="radio"]:checked + div,
+        .tabs [class*=" tab"] [type="radio"]:checked + div {
+            opacity: 1; }
+        .tabs [class^="tab"] [type="radio"] + div,
+        .tabs [class*=" tab"] [type="radio"] + div {
+            display: block;
+            opacity: 0;
+            padding: 2rem 0;
+            width: 90%;
+            -webkit-transition: all 0.3s ease-in-out;
+            -moz-transition: all 0.3s ease-in-out;
+            -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out; }
+        .tabs .tab-2 {
+            width: 50%; }
+        .tabs .tab-2 [type="radio"] + div {
+            width: 200%;
+            margin-left: 200%; }
+        .tabs .tab-2 [type="radio"]:checked + div {
+            margin-left: 0; }
+        .tabs .tab-2:last-child [type="radio"] + div {
+            margin-left: 100%; }
+        .tabs .tab-2:last-child [type="radio"]:checked + div {
+            margin-left: -100%; }
+
+        .message {
+            color: rgb(255, 230, 0) !important;
+        }
+        #status {
+            color: lime !important;
+        }
+    </style>
+</head>
+<body>
+
+    <h1> ITU 2.cvičenie: Web - chatovacia aplikácia  </h1>
+    
+    <div class="tabs">
+      <div class="tab-2">
+        <label for="tab2-1">Klient</label>
+        <input id="tab2-1" name="tabs-two" type="radio" checked="checked">
+        <div>
+          <h4>Chatovacia aplikácia</h4>
+          <div id="chatArea" style="height: 300px; border: solid #aaa 1px; overflow-y:scroll; padding-right: 1em; padding-left: 1em">
+            
+            <p style="float: left; width: 20%;">Date/Time</p>
+            <p style="float: left; width: 10%;">#ID</p>
+            <p style="float: left; width: 10%;">Name</p>
+            <p style="float: left; width: 60%;">Message</p>
+            
+        <div class="message">
+            <p id="timestamp" style="float: left; width: 20%;"></p>
+            <p id="message_id" style="float: left; width: 10%;"></p>
+            <p id="username" style="float: left; width: 10%;"></p>
+            <p id="user_message" style="float: left; width: 60%;"></p>
+        </div>    
+        </div> 
+    
+        <form id="userForm" onsubmit="return uploadData()">
+            <input type="text" id="newUserString" placeholder="Username">
+            <input type="text" id="newMessageString" placeholder="New message">
+            <input type="submit" value="send">
+        </form>
+    
+    <div id="status" style="border: solid #aaa 1px; padding-right: 1em; padding-left: 1em">&nbsp;</div> 
+        </div>
+      </div>
+      <div class="tab-2">
+        <label for="tab2-2">Server</label>
+        <input id="tab2-2" name="tabs-two" type="radio">
+        <div>
+            <h4>20 najnovších správ zo serveru vo formáte JSON</h4>
+            <div id="serverArea"></div>
+        </div>
+      </div>
+    </div>
+
+<script type="text/javascript">
+
+/***
+  * XMLHttpRequest object constructor (for compatibility with various browsers)
+  */
+
+function createXmlHttpRequestObject() 
+{
+    var request;
+  
+    try
+    {
+        request = new XMLHttpRequest(); // should work on all browsers except IE6 or older
+    } 
+    catch (e) 
+    { 
+        try 
+        {
+            request = new ActiveXObject("Microsoft.XMLHttp"); // browser is IE6 or older
+        }
+        catch (e) 
+        {
+            // ignore error
+        }
+    }
+  
+    if (!request) 
+    {
+        alert("Error creating the XMLHttpRequest object.");
+    } 
+    else 
+    {
+        return request;
+    }
+}
+
+function uploadData()
+{
+    try 
+    {
+        var request = createXmlHttpRequestObject(); // stores XMLHttpRequestObject
+        var form_user = document.getElementById("newUserString").value;
+        var form_message = document.getElementById("newMessageString").value;
+        
+        request.open("POST", "http://pckiss.fit.vutbr.cz/itu/api.php", true);
+        
+        request.onreadystatechange = function()
+        {
+            if (( request.readyState == 4) && (request.status == 200))
+            {   
+                downloadData();      
+                document.getElementById("userForm").reset();
+            }
+        }
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");
+        request.send("user="+form_user +"&data="+form_message);
+        
+    } 
+    catch (e) 
+    {
+        alert(e.toString());
+    }
+
+    return false; // to avoid default form submit behavior 
+}
+
+// Initialize keeper for the timestamp for the last sended/delivered message.
+var newest_dts = null;
+const chat = document.getElementById("chatArea");
+
+function scrollToBottom() {
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function downloadData() 
+{
+    try
+        { 
+        
+        var request = createXmlHttpRequestObject();
+        var server = document.getElementById("serverArea");
+        request.open("GET", "http://pckiss.fit.vutbr.cz/itu/api.php", true);
+        request.send(null);
+        
+        request.onreadystatechange = function() 
+        {
+            if (( request.readyState == 4) && (request.status == 200))
+            {                
+                // Writing the last 20 messages in raw JSON format to "serverArea" element on the website.
+                server.innerHTML = request.responseText;
+
+                // parse last 20 messages from server kept in JSON format  
+                var messages = JSON.parse(request.responseText);  
+                
+                // loop via all delivered messages parsed from JSON format
+                for (var i in messages) 
+                    {   
+                        //console.log(messages[i]);
+                        if (new Date(messages[i].dts).valueOf() > newest_dts) 
+                        {
+                            document.getElementById("timestamp").innerHTML += messages[i].dts + "<br>";
+                            document.getElementById("message_id").innerHTML += "#" + messages[i].id + "<br>";
+                            document.getElementById("username").innerHTML += messages[i].login + "<br>";
+                            document.getElementById("user_message").innerHTML += messages[i].cnt + "<br>";
+                        }
+                    }
+
+                // Updating timestamp for the last message inserted to the chat window.
+                newest_dts = new Date(messages[i].dts).valueOf();
+                // Writing current status of inserted message in chat window.
+                document.getElementById("status").innerHTML = "The last delivered message have ID: #" + messages[i].id;
+                
+                // scroll the chat window to the newest message
+                scrollToBottom();
+            }    
+        }
+
+        }
+    catch (e)
+    {
+        alert(e.toString()); // handle error via alert 
+    }
+    return false; // to avoid default form submit behavior
+}
+
+setInterval(downloadData, 3000);
+
+</script>
+
+</html>
